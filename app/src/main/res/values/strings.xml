@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">passtwo</string>
+    <string name="settings_button">Settings</string>
+    <string name="top_bar_text">password manager</string>
+    <string name="spage">Settings/Login page</string>
+    <string name="request_device_token">Request Device Token</string>
+</resources>
