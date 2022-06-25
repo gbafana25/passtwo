@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -71,6 +72,9 @@ public class settings_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_page);
         Intent i = getIntent();
+
+        //Button dtok = (Button) findViewById(R.id.req_device_token);
+        //Button ver = (Button) findViewById(R.id.verify_button);
 
         TextView tstat = (TextView) findViewById(R.id.vcode);
         SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);

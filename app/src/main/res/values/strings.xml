@@ -12,4 +12,5 @@
     <string name="vcode_placeholder">Verification Code will appear here</string>
     <string name="uname_ph">Username not found</string>
     <string name="email_ph">Email not found</string>
+    <string name="cred_btn">Passwords</string>
 </resources>

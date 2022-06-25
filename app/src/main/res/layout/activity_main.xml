@@ -10,39 +10,61 @@
         android:id="@+id/button"
         android:layout_width="312dp"
         android:layout_height="71dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="160dp"
-        android:layout_marginEnd="49dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="100dp"
         android:onClick="show_settings_page"
-        android:text="Settings"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/settings_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email_home_page" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/username_home_page"
         android:layout_width="149dp"
         android:layout_height="45dp"
-        android:layout_marginStart="134dp"
-        android:layout_marginTop="305dp"
+        android:layout_marginTop="292dp"
         android:layout_marginEnd="128dp"
+        android:fontFamily="sans-serif-black"
         android:gravity="center"
+        android:includeFontPadding="true"
         android:text="@string/uname_ph"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/email_home_page"
-        android:layout_width="149dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="134dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="128dp"
+        android:layout_width="219dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="96dp"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:includeFontPadding="true"
         android:text="@string/email_ph"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_home_page" />
+
+    <TextView
+        android:id="@+id/repo_home"
+        android:layout_width="143dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="132dp"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:includeFontPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email_home_page" />
+
+    <Button
+        android:id="@+id/cred_btn"
+        android:layout_width="329dp"
+        android:layout_height="88dp"
+        android:layout_marginStart="41dp"
+        android:layout_marginBottom="89dp"
+        android:text="@string/cred_btn"
+        android:onClick="show_cred_page"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

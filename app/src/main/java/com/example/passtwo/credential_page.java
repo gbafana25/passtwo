@@ -2,12 +2,13 @@ package com.example.passtwo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
+import android.app.ActionBar;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -20,13 +21,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-
-public class MainActivity extends AppCompatActivity {
-
-
-
+public class credential_page extends AppCompatActivity {
 
     private class ghapi extends AsyncTask<String, String, String> {
 
@@ -67,42 +65,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_credential_page);
+
+        LinearLayout ll = (LinearLayout) findViewById(R.id.list);
 
         SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
-        String email = new String();
         String uname = sp.getString("username", "username not found");
-        String rpname = sp.getString("repo_name", "repository name not found");
+        String rep = sp.getString("repo_name", "repo not found");
 
-        ghapi udata = new ghapi();
+        ghapi g = new ghapi();
+        g.execute("https://api.github.com/repos/"+uname+"/"+rep+"/contents");
 
-        udata.execute("https://api.github.com/user");
+
+
         try {
-            JSONObject prf = new JSONObject(udata.get());
-            email = prf.getString("email");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            JSONArray contents = new JSONArray(g.get());
+            for(int i = 0; i < contents.length(); i++) {
+                JSONObject item = (JSONObject) contents.get(i);
+                String dir = item.getString("type");
+                if(dir.equals("dir")) {
+                    System.out.println(item.getString("name")+"\n");
+                    Button te = new Button(this);
+                    te.setPadding(100, 100, 100, 100);
+                    te.setGravity(Button.TEXT_ALIGNMENT_CENTER);
+                    te.setWidth(1200);
+                    te.setText(item.getString("name"));
+                    ll.addView(te);
 
 
-        TextView uname_home = (TextView) findViewById(R.id.username_home_page);
-        TextView email_home = (TextView) findViewById(R.id.email_home_page);
-        TextView repo_home = (TextView) findViewById(R.id.repo_home);
-        uname_home.setText(uname);
-        email_home.setText(email);
-        repo_home.setText(rpname);
-
-
-
-        //udata.execute("https://api.github.com/user/repos");
-
-        /*
-        try {
-
+                }
+            }
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -110,19 +102,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        */
-
-
-    }
-
-    public void show_settings_page(View view) {
-        Intent i = new Intent(this, settings_page.class);
-        startActivity(i);
-
-    }
-
-    public void show_cred_page(View view) {
-        Intent i = new Intent(this, credential_page.class);
-        startActivity(i);
     }
 }
