@@ -14,7 +14,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,12 +25,10 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-import okhttp3.OkHttpClient;
 
 
 public class settings_page extends AppCompatActivity {
 
-    OkHttpClient gh = new OkHttpClient();
     String code_url = "https://github.com/login/device/code";
     String client_id = "";
 
@@ -72,38 +70,42 @@ public class settings_page extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_page);
-
         Intent i = getIntent();
 
-        /*
-        GetData gd = new GetData();
-        gd.execute("https://api.github.com/users/gbafana25");
-        try {
-            // use `get` method to return proper value from async function
-            System.out.println(gd.get());
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        TextView tstat = (TextView) findViewById(R.id.vcode);
+        SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
+        String ato = sp.getString("access_token", "");
+        if(!ato.isEmpty()) {
+            tstat.setText("Device already registered");
+            //System.out.println(ato);
         }
 
-         */
+
 
 
     }
 
     public void get_device_code(View view) {
-        //Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com"));
-        //startActivity(i);
         EditText cid = (EditText) findViewById(R.id.client_id_field);
         client_id = cid.getText().toString();
+        SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor en = sp.edit();
+        if(!client_id.isEmpty()) {
+            en.putString("client_id", client_id);
+        }
+
         //System.out.println(client_id);
         GetData gd = new GetData();
-        gd.execute("https://github.com/login/device/code?client_id="+client_id);
+        gd.execute("https://github.com/login/device/code?client_id="+client_id+"&scope=repo,read:user");
         try {
             JSONObject respdata = new JSONObject(gd.get());
             String uco = respdata.getString("user_code");
-            System.out.println(uco);
+            String dco = respdata.getString("device_code");
+            en.putString("device_code", dco);
+            TextView code_box = (TextView) findViewById(R.id.vcode);
+            code_box.setText(uco);
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/login/device"));
+            startActivity(i);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -111,12 +113,34 @@ public class settings_page extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        en.commit();
 
     }
 
+    public void verify_device_code(View view) {
+        SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor edi = sp.edit();
+        String cid = sp.getString("client_id", "client id not found");
+        String dcode = sp.getString("device_code", "device code not found");
+        GetData vc = new GetData();
+        vc.execute("https://github.com/login/oauth/access_token?client_id="+cid+"&device_code="+dcode+"&grant_type=urn:ietf:params:oauth:grant-type:device_code");
+        try {
+            JSONObject ver = new JSONObject(vc.get());
+            String token = ver.getString("access_token");
+            //System.out.println(token);
+            edi.putString("access_token", token);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        edi.commit();
+    }
+
     public void get_prefs() {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
         String tu = sp.getString("username", "username not found");
         String tr = sp.getString("repo_name", "repository name not found");
         System.out.println("Username: " + tu);
@@ -126,7 +150,7 @@ public class settings_page extends AppCompatActivity {
     public void save_prefs(View view) {
         EditText uname = (EditText) findViewById(R.id.github_username);
         EditText repo_url = (EditText) findViewById(R.id.repo_name);
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
         SharedPreferences.Editor e = sp.edit();
 
         String ue = uname.getText().toString();

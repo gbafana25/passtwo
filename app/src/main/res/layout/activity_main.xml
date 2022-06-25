@@ -8,19 +8,41 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="0dp"
+        android:layout_width="312dp"
         android:layout_height="71dp"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="110dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginEnd="49dp"
         android:onClick="show_settings_page"
         android:text="Settings"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.567" />
+        app:layout_constraintTop_toBottomOf="@+id/email_home_page" />
+
+    <TextView
+        android:id="@+id/username_home_page"
+        android:layout_width="149dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="134dp"
+        android:layout_marginTop="305dp"
+        android:layout_marginEnd="128dp"
+        android:gravity="center"
+        android:text="@string/uname_ph"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/email_home_page"
+        android:layout_width="149dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="134dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="128dp"
+        android:text="@string/email_ph"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_home_page" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

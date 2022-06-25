@@ -8,35 +8,27 @@
 
     <Button
         android:id="@+id/req_device_token"
-        android:layout_width="205dp"
-        android:layout_height="57dp"
+        android:layout_width="247dp"
+        android:layout_height="49dp"
         android:layout_marginStart="115dp"
-        android:layout_marginTop="341dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="91dp"
         android:onClick="get_device_code"
         android:text="@string/request_device_token"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/verify_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.559"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.867" />
+        app:layout_constraintTop_toBottomOf="@+id/client_id_field" />
 
     <EditText
         android:id="@+id/github_username"
         android:layout_width="272dp"
         android:layout_height="63dp"
-        android:layout_marginStart="86dp"
-        android:layout_marginTop="115dp"
-        android:layout_marginEnd="53dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="56dp"
         android:ems="10"
         android:hint="@string/username_box"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/repo_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
@@ -44,7 +36,7 @@
         android:layout_width="250dp"
         android:layout_height="72dp"
         android:layout_marginStart="73dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="72dp"
         android:ems="10"
         android:hint="@string/repo_box"
@@ -58,33 +50,48 @@
         android:id="@+id/client_id_field"
         android:layout_width="230dp"
         android:layout_height="60dp"
-        android:layout_marginStart="107dp"
-        android:layout_marginTop="249dp"
-        android:layout_marginEnd="74dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="79dp"
         android:autoText="false"
         android:ems="10"
         android:hint="@string/id_box"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/req_device_token"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/repo_name" />
+        app:layout_constraintTop_toBottomOf="@+id/vcode" />
 
     <Button
         android:id="@+id/save_settings"
-        android:layout_width="181dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="115dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="115dp"
-        android:layout_marginBottom="173dp"
-        android:text="@string/save_prefs_button"
+        android:layout_width="174dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="104dp"
         android:onClick="save_prefs"
-        app:layout_constraintBottom_toTopOf="@+id/client_id_field"
+        android:text="@string/save_prefs_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/repo_name" />
+
+    <Button
+        android:id="@+id/verify_button"
+        android:layout_width="283dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginEnd="91dp"
+        android:layout_marginBottom="47dp"
+        android:onClick="verify_device_code"
+        android:text="@string/verify"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/vcode"
+        android:layout_width="194dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="133dp"
+        android:layout_marginEnd="100dp"
+        android:text="@string/vcode_placeholder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/save_settings" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

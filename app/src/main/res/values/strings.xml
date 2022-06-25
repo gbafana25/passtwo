@@ -8,4 +8,8 @@
     <string name="repo_box">Repository</string>
     <string name="id_box">Enter Client ID</string>
     <string name="save_prefs_button">Save Settings</string>
+    <string name="verify">Get Token</string>
+    <string name="vcode_placeholder">Verification Code will appear here</string>
+    <string name="uname_ph">Username not found</string>
+    <string name="email_ph">Email not found</string>
 </resources>
