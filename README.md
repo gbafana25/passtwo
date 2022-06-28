@@ -11,5 +11,6 @@ Password manager (v2)
 
 
 ## TODO
-- build section to access password list (finish settings page first)
-- add info on main page about user (username, email)
+- **started** build section to access password list (finish settings page first)
+	- when account is selected from dialog, print file (as byte array)
+- add separate button to refresh/download data
