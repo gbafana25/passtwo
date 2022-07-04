@@ -3,6 +3,7 @@ package com.example.passtwo;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.core.motion.utils.Utils;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -15,6 +16,10 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
@@ -218,6 +223,7 @@ public class credential_page extends AppCompatActivity {
             String[] lt = new String[ta.size()];
             ta.toArray(lt);
             final int[] cit = {0};
+            CoordinatorLayout layout;
             AlertDialog.Builder bd = new AlertDialog.Builder(new ContextThemeWrapper(credential_page.this, R.style.Theme_Passtwo));
             bd.setTitle(dirname)
                     .setSingleChoiceItems(lt, cit[0], new DialogInterface.OnClickListener() {
@@ -231,6 +237,9 @@ public class credential_page extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //System.out.println(lt[cit[0]]);
                             decrypt_file(dirname, lt[cit[0]], uname, rep);
+                            Toast.makeText(getApplicationContext(), dirname+" password copied", Toast.LENGTH_SHORT).show();
+
+
 
                         }
                     })
@@ -332,6 +341,8 @@ public class credential_page extends AppCompatActivity {
                 ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData cd = ClipData.newPlainText("label", pass_dec);
                 clip.setPrimaryClip(cd);
+
+
                 //System.out.println(pass_dec);
             }
 

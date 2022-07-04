@@ -19,5 +19,8 @@ Password manager (v2)
 4. When the app is reopened, the text box will say "Device already registered"
 
 
+## TODO
+- make text box in settings page bigger/more visible
+
 
 
