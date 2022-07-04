@@ -13,4 +13,5 @@
     <string name="uname_ph">Username not found</string>
     <string name="email_ph">Email not found</string>
     <string name="cred_btn">Passwords</string>
+    <string name="pass">GPG password</string>
 </resources>

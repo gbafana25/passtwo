@@ -63,8 +63,8 @@
         android:id="@+id/save_settings"
         android:layout_width="174dp"
         android:layout_height="51dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="104dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="108dp"
         android:onClick="save_prefs"
         android:text="@string/save_prefs_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,11 +87,23 @@
         android:id="@+id/vcode"
         android:layout_width="194dp"
         android:layout_height="39dp"
-        android:layout_marginTop="133dp"
+        android:layout_marginTop="53dp"
         android:layout_marginEnd="100dp"
         android:text="@string/vcode_placeholder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/save_settings" />
+
+    <EditText
+        android:id="@+id/gpg_pass_box"
+        android:layout_width="249dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="72dp"
+        android:ems="10"
+        android:hint="@string/pass"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/repo_name" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

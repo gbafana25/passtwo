@@ -154,17 +154,23 @@ public class settings_page extends AppCompatActivity {
     public void save_prefs(View view) {
         EditText uname = (EditText) findViewById(R.id.github_username);
         EditText repo_url = (EditText) findViewById(R.id.repo_name);
+        EditText gpass = (EditText) findViewById(R.id.gpg_pass_box);
         SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
         SharedPreferences.Editor e = sp.edit();
 
         String ue = uname.getText().toString();
         String re = repo_url.getText().toString();
+        String gp = gpass.getText().toString();
         if(!ue.isEmpty()) {
             e.putString("username", ue);
         }
 
         if(!re.isEmpty()) {
             e.putString("repo_name", re);
+        }
+
+        if(!gp.isEmpty()) {
+            e.putString("gpg_pass", gp);
         }
 
         e.commit();

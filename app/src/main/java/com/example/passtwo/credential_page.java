@@ -2,6 +2,7 @@ package com.example.passtwo;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.core.motion.utils.Utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -47,6 +48,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -254,14 +256,18 @@ public class credential_page extends AppCompatActivity {
     }
 
     public void decrypt_file(String dir, String fname, String uname, String rep) {
-        //byte[] prk = get_private_key(uname, rep);
-        download_private_key(uname, rep);
+        SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
+        String pass = sp.getString("gpg_pass", "gpg password not found");
+
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
         File cdir = getDir(dir, Context.MODE_PRIVATE);
         File kd = getDir("keys", Context.MODE_PRIVATE);
         File f = new File(cdir, fname);
         File privk = new File(kd, "priv.pgp");
+        if(!privk.exists()) {
+            download_private_key(uname, rep);
+        }
 
         byte[] bu = new byte[(int) f.length()];
         byte[] pkey = new byte[(int) privk.length()];
@@ -290,37 +296,40 @@ public class credential_page extends AppCompatActivity {
 
             while(pri == null && it.hasNext()) {
                 pbe = (PGPPublicKeyEncryptedData) it.next();
-                // doesn't give error when correct password is entered
-                // still not printing data
-                pri = PGPfuncs.findSecretKey(ring, pbe.getKeyID(), "notpass".toCharArray());
+                pri = PGPfuncs.findSecretKey(ring, pbe.getKeyID(), pass.toCharArray());
             }
 
             InputStream cl = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(pri));
             JcaPGPObjectFactory pla = new JcaPGPObjectFactory(cl);
 
             Object po = pla.nextObject();
+
+
             if(po instanceof PGPCompressedData) {
                 PGPCompressedData comp = (PGPCompressedData) po;
                 JcaPGPObjectFactory fa = new JcaPGPObjectFactory(comp.getDataStream());
 
-                fa.nextObject();
+                po = fa.nextObject();
             }
 
-            // fix: not printing password, no errors
             if(po instanceof PGPLiteralData) {
+
                 PGPLiteralData ld = (PGPLiteralData) po;
-                InputStream rdata = ld.getDataStream();
-                InputStreamReader isr = new InputStreamReader(rdata, StandardCharsets.UTF_8);
-                System.out.println(isr.read());
+                InputStream rdata = ld.getInputStream();
+                byte[] b = new byte[400];
+                rdata.read(b);
+                int blen = 0;
+                for(int i = 0; i < b.length; i++) {
+                    if(b[i] != 0) {
+                        blen++;
+                    }
+                }
+                byte[] bfin = Arrays.copyOf(b, blen);
+                String pass_dec = new String(bfin, StandardCharsets.UTF_8);
+                System.out.println(pass_dec);
             }
-            //fis.read(bu);
-            //fis.close();
-
-            //System.out.println(Arrays.toString(bu));
-            //InputStream in = PGPUtil.getDecoderStream(fis);
 
 
-            //System.out.println(Arrays.toString(prv));
             pin.close();
             fis.close();
         } catch (FileNotFoundException e) {
