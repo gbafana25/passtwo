@@ -13,15 +13,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openpgp.PGPCompressedData;
+import org.bouncycastle.openpgp.PGPEncryptedDataList;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPLiteralData;
+import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.bouncycastle.openpgp.PGPPublicKeyEncryptedData;
+import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
+import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
+import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
+import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
+import org.bouncycastle.util.io.Streams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,11 +43,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+
 
 public class credential_page extends AppCompatActivity {
 
@@ -142,7 +158,7 @@ public class credential_page extends AppCompatActivity {
                     te.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
                             try {
-                                getfiles(item.getString("url"), item.getString("name"));
+                                getfiles(item.getString("url"), item.getString("name"), uname, rep);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -165,7 +181,7 @@ public class credential_page extends AppCompatActivity {
 
     }
 
-    View.OnClickListener getfiles(String url, String dirname) {
+    View.OnClickListener getfiles(String url, String dirname, String uname, String rep) {
         ghapi d = new ghapi();
         d.execute(url);
         JSONArray c = null;
@@ -210,7 +226,7 @@ public class credential_page extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //System.out.println(lt[cit[0]]);
-                            decrypt_file(dirname, lt[cit[0]]);
+                            decrypt_file(dirname, lt[cit[0]], uname, rep);
 
                         }
                     })
@@ -237,9 +253,105 @@ public class credential_page extends AppCompatActivity {
         return null;
     }
 
-    public void decrypt_file(String dir, String fname) {
+    public void decrypt_file(String dir, String fname, String uname, String rep) {
+        //byte[] prk = get_private_key(uname, rep);
+        download_private_key(uname, rep);
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
         File cdir = getDir(dir, Context.MODE_PRIVATE);
+        File kd = getDir("keys", Context.MODE_PRIVATE);
         File f = new File(cdir, fname);
-        System.out.println(f.getAbsolutePath());
+        File privk = new File(kd, "priv.pgp");
+
+        byte[] bu = new byte[(int) f.length()];
+        byte[] pkey = new byte[(int) privk.length()];
+        //System.out.println(f.getAbsolutePath());
+
+
+        try {
+            InputStream fis = new FileInputStream(f);
+            InputStream pin = new FileInputStream(privk);
+            fis = PGPUtil.getDecoderStream(fis);
+            JcaPGPObjectFactory jfa = new JcaPGPObjectFactory(fis);
+            PGPEncryptedDataList dlist;
+
+            Object o = jfa.nextObject();
+
+            if(o instanceof PGPEncryptedDataList) {
+                dlist = (PGPEncryptedDataList) o;
+            } else {
+                dlist = (PGPEncryptedDataList) jfa.nextObject();
+            }
+
+            Iterator it = dlist.getEncryptedDataObjects();
+            PGPPrivateKey pri = null;
+            PGPPublicKeyEncryptedData pbe = null;
+            PGPSecretKeyRingCollection ring = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(pin), new JcaKeyFingerprintCalculator());
+
+            while(pri == null && it.hasNext()) {
+                pbe = (PGPPublicKeyEncryptedData) it.next();
+                // doesn't give error when correct password is entered
+                // still not printing data
+                pri = PGPfuncs.findSecretKey(ring, pbe.getKeyID(), "notpass".toCharArray());
+            }
+
+            InputStream cl = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(pri));
+            JcaPGPObjectFactory pla = new JcaPGPObjectFactory(cl);
+
+            Object po = pla.nextObject();
+            if(po instanceof PGPCompressedData) {
+                PGPCompressedData comp = (PGPCompressedData) po;
+                JcaPGPObjectFactory fa = new JcaPGPObjectFactory(comp.getDataStream());
+
+                fa.nextObject();
+            }
+
+            // fix: not printing password, no errors
+            if(po instanceof PGPLiteralData) {
+                PGPLiteralData ld = (PGPLiteralData) po;
+                InputStream rdata = ld.getDataStream();
+                InputStreamReader isr = new InputStreamReader(rdata, StandardCharsets.UTF_8);
+                System.out.println(isr.read());
+            }
+            //fis.read(bu);
+            //fis.close();
+
+            //System.out.println(Arrays.toString(bu));
+            //InputStream in = PGPUtil.getDecoderStream(fis);
+
+
+            //System.out.println(Arrays.toString(prv));
+            pin.close();
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (PGPException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void download_private_key(String uname, String rep) {
+        File kd = getDir("keys", Context.MODE_PRIVATE);
+        File f = new File(kd, "priv.pgp");
+
+        rdloader pr = new rdloader();
+        pr.execute("https://raw.githubusercontent.com/"+uname+"/"+rep+"/main/priv.pgp");
+        try {
+                byte[] pf = pr.get();
+                FileOutputStream os = new FileOutputStream(f);
+                os.write(pf);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
