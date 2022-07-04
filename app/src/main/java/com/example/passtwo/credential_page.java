@@ -4,6 +4,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.core.motion.utils.Utils;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -326,7 +328,11 @@ public class credential_page extends AppCompatActivity {
                 }
                 byte[] bfin = Arrays.copyOf(b, blen);
                 String pass_dec = new String(bfin, StandardCharsets.UTF_8);
-                System.out.println(pass_dec);
+
+                ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData cd = ClipData.newPlainText("label", pass_dec);
+                clip.setPrimaryClip(cd);
+                //System.out.println(pass_dec);
             }
 
 

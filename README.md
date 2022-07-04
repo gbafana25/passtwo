@@ -3,14 +3,21 @@
 Password manager (v2)
 
 
-## Steps for device flow auth **done**
-1. app requests device and user codes 
-2. app prompts user to enter code through browser
-3. app sends post request to endpoint, gets token
+## Setup
+
+### User Info
+1. Enter username, repository name (only the name), and your gpg password
+2. Hit **Save Settings**
+
+*any input boxes left blank will keep the current value* 
+
+
+### Device Flow 
+1. Enter Client ID listed on the OAuth app's page, hit **Request Device Token**
+2. The browser will be opened automatically, and the text box in the middle of the settings page will have the authorization code
+3. Enter the code, go back to the app, and hit **Get Token**
+4. When the app is reopened, the text box will say "Device already registered"
 
 
 
-## TODO
-- **started** build section to access password list (finish settings page first)
-	- when account is selected from dialog, print file (as byte array)
-- add separate button to refresh/download data
+
