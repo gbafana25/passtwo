@@ -85,11 +85,13 @@
 
     <TextView
         android:id="@+id/vcode"
-        android:layout_width="194dp"
-        android:layout_height="39dp"
+        android:layout_width="325dp"
+        android:layout_height="42dp"
         android:layout_marginTop="53dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/vcode_placeholder"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/save_settings" />
 

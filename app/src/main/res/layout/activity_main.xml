@@ -19,27 +19,29 @@
 
     <TextView
         android:id="@+id/username_home_page"
-        android:layout_width="149dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="292dp"
-        android:layout_marginEnd="128dp"
+        android:layout_width="282dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="123dp"
+        android:layout_marginEnd="65dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:includeFontPadding="true"
         android:text="@string/uname_ph"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <TextView
         android:id="@+id/email_home_page"
-        android:layout_width="219dp"
-        android:layout_height="48dp"
+        android:layout_width="299dp"
+        android:layout_height="46dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="96dp"
+        android:layout_marginEnd="48dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:includeFontPadding="true"
         android:text="@string/email_ph"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_home_page" />
 
@@ -52,6 +54,7 @@
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:includeFontPadding="true"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_home_page" />
 
@@ -61,8 +64,8 @@
         android:layout_height="88dp"
         android:layout_marginStart="41dp"
         android:layout_marginBottom="89dp"
-        android:text="@string/cred_btn"
         android:onClick="show_cred_page"
+        android:text="@string/cred_btn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

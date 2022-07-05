@@ -27,8 +27,6 @@ Password manager (v2)
 ![settings](/img/settings.png)
 
 
-## TODO
-- make text box in settings page bigger/more visible
 
 
 
