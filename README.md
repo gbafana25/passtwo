@@ -19,6 +19,14 @@ Password manager (v2)
 4. When the app is reopened, the text box will say "Device already registered"
 
 
+## Screenshots
+
+![home](/img/home.png)
+
+
+![settings](/img/settings.png)
+
+
 ## TODO
 - make text box in settings page bigger/more visible
 
