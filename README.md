@@ -2,7 +2,7 @@
 
 Password manager (v2)
 
-![logo](/img/lockv2.png)
+![logo](/img/lockv3.png)
 
 
 ## Setup
