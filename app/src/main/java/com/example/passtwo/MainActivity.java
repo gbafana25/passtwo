@@ -16,11 +16,16 @@ DEALINGS IN THE SOFTWARE.
 
 package com.example.passtwo;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.BiometricManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+//import android.hardware.biometrics.BiometricPrompt;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -114,22 +119,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //udata.execute("https://api.github.com/user/repos");
-
-        /*
-        try {
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        */
-
 
     }
+
 
     public void show_settings_page(View view) {
         Intent i = new Intent(this, settings_page.class);

@@ -13,15 +13,20 @@ DEALINGS IN THE SOFTWARE.
 
 package com.example.passtwo;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
 import androidx.constraintlayout.core.motion.utils.Utils;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -72,7 +77,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
+import java.util.concurrent.Executor;
 
 
 public class credential_page extends AppCompatActivity {
@@ -152,6 +157,40 @@ public class credential_page extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credential_page);
+
+        Executor ex = ContextCompat.getMainExecutor(this);
+        BiometricPrompt biop = new BiometricPrompt(credential_page.this,
+                ex, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                Toast.makeText(getApplicationContext(), errString, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(credential_page.this, MainActivity.class);
+                startActivity(i);
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult res) {
+                super.onAuthenticationSucceeded(res);
+                Toast.makeText(getApplicationContext(), "Login succeeded", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(credential_page.this, MainActivity.class);
+                startActivity(i);
+            }
+        });
+
+        BiometricPrompt.PromptInfo bio = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Fingerprint login")
+                .setSubtitle("fingerprint plz")
+                .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                .build();
+
+        biop.authenticate(bio);
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.list);
 
