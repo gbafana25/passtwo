@@ -19,6 +19,8 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +37,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
@@ -163,10 +170,26 @@ public class settings_page extends AppCompatActivity {
         System.out.println("Repository: " + tr);
     }
 
-    public void save_prefs(View view) {
+    public void save_prefs(View view) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         EditText uname = (EditText) findViewById(R.id.github_username);
         EditText repo_url = (EditText) findViewById(R.id.repo_name);
         EditText gpass = (EditText) findViewById(R.id.gpg_pass_box);
+
+        String alias = "gpg_key_pass";
+        /*
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(
+                KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore");
+        kpg.initialize(new KeyGenParameterSpec.Builder(
+                alias,
+                KeyProperties.PURPOSE_SIGN | KeyProperties.PURPOSE_VERIFY)
+                .setDigests(KeyProperties.DIGEST_SHA256,
+                        KeyProperties.DIGEST_SHA512)
+                .build());
+
+        KeyPair kp = kpg.generateKeyPair();
+
+         */
+
         SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
         SharedPreferences.Editor e = sp.edit();
 

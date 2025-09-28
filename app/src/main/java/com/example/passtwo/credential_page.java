@@ -13,15 +13,6 @@ DEALINGS IN THE SOFTWARE.
 
 package com.example.passtwo;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricManager;
-import androidx.biometric.BiometricPrompt;
-import androidx.constraintlayout.core.motion.utils.Utils;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -30,14 +21,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
@@ -51,7 +49,6 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
-import org.bouncycastle.util.io.Streams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,7 +62,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,6 +70,7 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -157,7 +154,9 @@ public class credential_page extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credential_page);
-
+        Intent intent = getIntent();
+        ArrayList<String> site_names = new ArrayList<>();
+        HashMap<String, Button> all_sites = new HashMap<>();
         Executor ex = ContextCompat.getMainExecutor(this);
         BiometricPrompt biop = new BiometricPrompt(credential_page.this,
                 ex, new BiometricPrompt.AuthenticationCallback() {
@@ -193,6 +192,7 @@ public class credential_page extends AppCompatActivity {
         biop.authenticate(bio);
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.list);
+        SearchView searchbar = findViewById(R.id.site_search_bar);
 
         SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
         String uname = sp.getString("username", "username not found");
@@ -216,14 +216,14 @@ public class credential_page extends AppCompatActivity {
                     te.setWidth(1200);
                     te.setText(item.getString("name"));
                     ll.addView(te);
-                    te.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            try {
-                                getfiles(item.getString("url"), item.getString("name"), uname, rep);
+                    site_names.add(item.getString("name"));
+                    all_sites.put(item.getString("name"), te);
+                    te.setOnClickListener(v -> {
+                        try {
+                            getfiles(item.getString("url"), item.getString("name"), uname, rep);
 
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     });
 
@@ -231,14 +231,54 @@ public class credential_page extends AppCompatActivity {
 
                 }
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
 
+        searchbar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                if(s.isEmpty()) {
+                    ll.removeAllViews();
+                    for(int j = 0; j < site_names.size(); j++) {
+                        ll.addView(all_sites.get(site_names.get(j)));
+                    }
+                    return false;
+                } else {
+                    ll.removeAllViews();
+                    for(int i = 0; i < site_names.size(); i++) {
+                        //Button btn = (Button)ll.getChildAt(i);
+                        if(site_names.get(i).contains(s)) {
+                            ll.addView(all_sites.get(site_names.get(i)));
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if(s.isEmpty()) {
+                    ll.removeAllViews();
+                    for(int j = 0; j < site_names.size(); j++) {
+                        ll.addView(all_sites.get(site_names.get(j)));
+                    }
+                    return false;
+                } else {
+                    ll.removeAllViews();
+                    for(int i = 0; i < site_names.size(); i++) {
+                        //Button btn = (Button)ll.getChildAt(i);
+                        if(site_names.get(i).contains(s)) {
+                            ll.addView(all_sites.get(site_names.get(i)));
+                        }
+                    }
+                }
+                return false;
+            }
+
+
+        });
 
     }
 
@@ -263,8 +303,6 @@ public class credential_page extends AppCompatActivity {
                     byte[] rf = raw.get();
                     try(FileOutputStream os = new FileOutputStream(cf)) {
                         os.write(rf);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -306,11 +344,7 @@ public class credential_page extends AppCompatActivity {
 
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (JSONException | ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -382,8 +416,8 @@ public class credential_page extends AppCompatActivity {
                 byte[] b = new byte[400];
                 rdata.read(b);
                 int blen = 0;
-                for(int i = 0; i < b.length; i++) {
-                    if(b[i] != 0) {
+                for (byte value : b) {
+                    if (value != 0) {
                         blen++;
                     }
                 }
@@ -392,6 +426,9 @@ public class credential_page extends AppCompatActivity {
 
                 ClipboardManager clip = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData cd = ClipData.newPlainText("label", pass_dec);
+                PersistableBundle sensitive = new PersistableBundle();
+                sensitive.putBoolean("android.content.extra.IS_SENSITIVE", true);
+                cd.getDescription().setExtras(sensitive);
                 clip.setPrimaryClip(cd);
 
 
@@ -401,13 +438,7 @@ public class credential_page extends AppCompatActivity {
 
             pin.close();
             fis.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (PGPException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+        } catch (IOException | PGPException | NoSuchProviderException e) {
             e.printStackTrace();
         }
     }
@@ -422,13 +453,7 @@ public class credential_page extends AppCompatActivity {
                 byte[] pf = pr.get();
                 FileOutputStream os = new FileOutputStream(f);
                 os.write(pf);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ExecutionException | InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }

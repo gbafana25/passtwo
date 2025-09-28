@@ -28,6 +28,9 @@ Password manager (v2)
 
 ![settings](/img/settings.png)
 
+## TODO
+- store gpg password in memory or other temp. format
+- add release apk to github repo
 
 
 
